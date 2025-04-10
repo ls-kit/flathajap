@@ -24,4 +24,21 @@ class ApiService {
       throw Exception('Failed to load Hajj page');
     }
   }
+
+  Future<HajjPage> fetchHajjPageBySlug(String slug) async {
+    final response = await http.get(
+      Uri.parse('https://rest.lskit.com/wp-json/wp/v2/hajj_pages?slug=$slug'),
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      if (data.isNotEmpty) {
+        return HajjPage.fromJson(data[0]);
+      } else {
+        throw Exception('No page found for slug: $slug');
+      }
+    } else {
+      throw Exception('Failed to load page for slug: $slug');
+    }
+  }
 }
