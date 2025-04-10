@@ -44,6 +44,9 @@ class HomePage extends StatelessWidget {
               ),
               itemBuilder: (context, index) {
                 final page = pages[index];
+                final icon = _getIcon(page.slug);
+                final bgColor = _getColor(page.slug);
+
                 return GestureDetector(
                   onTap: () {
                     // 🔀 Navigate based on slug
@@ -72,7 +75,6 @@ class HomePage extends StatelessWidget {
                           ),
                         );
                         break;
-
                       default:
                         Navigator.push(
                           context,
@@ -84,20 +86,25 @@ class HomePage extends StatelessWidget {
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.green.shade50,
+                      color: bgColor.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.green, width: 1),
+                      border: Border.all(color: bgColor, width: 1),
                     ),
                     padding: const EdgeInsets.all(12),
-                    child: Center(
-                      child: Text(
-                        page.title,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(icon, color: bgColor, size: 36),
+                        const SizedBox(height: 8),
+                        Text(
+                          page.title,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
+                      ],
                     ),
                   ),
                 );
@@ -107,5 +114,37 @@ class HomePage extends StatelessWidget {
         },
       ),
     );
+  }
+
+  // 🌟 Icon based on slug
+  IconData _getIcon(String slug) {
+    switch (slug) {
+      case 'checklist':
+        return Icons.check_circle_outline;
+      case 'dua_collections':
+        return Icons.menu_book;
+      case 'live-map':
+        return Icons.map_outlined;
+      case 'hajj_steps':
+        return Icons.directions_walk;
+      default:
+        return Icons.article;
+    }
+  }
+
+  // 🎨 Color per slug
+  Color _getColor(String slug) {
+    switch (slug) {
+      case 'checklist':
+        return Colors.teal;
+      case 'dua_collections':
+        return Colors.deepOrange;
+      case 'live-map':
+        return Colors.indigo;
+      case 'hajj_steps':
+        return Colors.green;
+      default:
+        return Colors.blueGrey;
+    }
   }
 }
