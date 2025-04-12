@@ -1,22 +1,13 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    id("dev.flutter.flutter-gradle-plugin")
+    id("dev.flutter.flutter-gradle-plugin") 
 }
 
 android {
     namespace = "com.example.hajj_app"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
-    }
+    ndkVersion = "27.0.12077973" 
 
     defaultConfig {
         applicationId = "com.example.hajj_app"
@@ -24,16 +15,27 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        multiDexEnabled = true
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8 
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8" 
     }
 
     signingConfigs {
-        create("release") {
-            storeFile = file("../keystore.jks") // ✅ Change path if needed
-            storePassword = "your-store-password"
-            keyAlias = "your-key-alias"
-            keyPassword = "your-key-password"
-        }
+    create("release") {
+        storeFile = file("keystore.jks")
+        storePassword = "98765432"
+        keyAlias = "key"
+        keyPassword = "98765432"
     }
+}
+
 
     buildTypes {
         getByName("release") {
