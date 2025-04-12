@@ -39,7 +39,19 @@ class _HajjHomeScreenState extends State<HajjHomeScreen> {
     }
   }
 
-  void openPageBySlug(BuildContext context, HajjPage page) {
+  void openPageBySlug(
+    BuildContext context,
+    HajjPage page, {
+    bool forceDetail = false,
+  }) {
+    if (forceDetail) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => DetailPage(id: page.id)),
+      );
+      return;
+    }
+
     switch (page.slug) {
       case 'checklist':
         Navigator.push(
@@ -142,7 +154,12 @@ class _HajjHomeScreenState extends State<HajjHomeScreen> {
                       itemBuilder: (context, index) {
                         final item = hajjPages[index];
                         return GestureDetector(
-                          onTap: () => openPageBySlug(context, item),
+                          onTap:
+                              () => openPageBySlug(
+                                context,
+                                item,
+                                forceDetail: index == 0,
+                              ),
                           child: Container(
                             margin: const EdgeInsets.only(right: 16),
                             decoration: boxDecorationWithRoundedCorners(
