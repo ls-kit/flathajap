@@ -10,9 +10,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: HajjHomeScreen(), // ✅ Class name from your screen
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
+      home: const HajjHomeScreen(),
+      theme: ThemeData(fontFamily: 'HindSiliguri'),
     );
   }
 }
