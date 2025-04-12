@@ -10,13 +10,14 @@ android {
     ndkVersion = "27.0.12077973" 
 
     defaultConfig {
-        applicationId = "com.example.hajj_app"
+        applicationId = "com.lskit.hajj_app"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
         multiDexEnabled = true
     }
+    
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8 
