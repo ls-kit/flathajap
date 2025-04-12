@@ -1,150 +1,238 @@
 import 'package:flutter/material.dart';
-import '../models/hajj_page.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:nb_utils/nb_utils.dart';
 import '../services/api_service.dart';
-import 'detail_page.dart';
+import '../models/hajj_page.dart';
 import 'checklist_page.dart';
 import 'dua_collections_page.dart';
 import 'live_map_page.dart';
+import 'settings_about_page.dart';
+import 'detail_page.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class HajjHomeScreen extends StatefulWidget {
+  const HajjHomeScreen({super.key});
+
+  @override
+  State<HajjHomeScreen> createState() => _HajjHomeScreenState();
+}
+
+class _HajjHomeScreenState extends State<HajjHomeScreen> {
+  late List<HajjPage> hajjPages = [];
+  int _selectedIndex = 0;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    try {
+      final data = await ApiService().fetchHajjPages();
+      setState(() {
+        hajjPages = data;
+        isLoading = false;
+      });
+    } catch (e) {
+      toast('Failed to load data');
+    }
+  }
+
+  void openPageBySlug(BuildContext context, HajjPage page) {
+    switch (page.slug) {
+      case 'checklist':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const ChecklistPage()),
+        );
+        break;
+      case 'dua_collections':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const DuaCollectionsPage()),
+        );
+        break;
+      case 'live-map':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const LiveMapPage()),
+        );
+        break;
+      case 'settings_about':
+      case 'hajj_steps':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const SettingsAboutPage()),
+        );
+        break;
+      default:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => DetailPage(id: page.id)),
+        );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("🕋 হজ্ব গাইড"),
-        centerTitle: true,
-        backgroundColor: Colors.green,
-      ),
-      body: FutureBuilder<List<HajjPage>>(
-        future: ApiService().fetchHajjPages(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('কোনো তথ্য পাওয়া যায়নি'));
-          }
-
-          final pages = snapshot.data!;
-
-          return Padding(
-            padding: const EdgeInsets.all(12),
-            child: GridView.builder(
-              itemCount: pages.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-                childAspectRatio: 3 / 2,
-              ),
-              itemBuilder: (context, index) {
-                final page = pages[index];
-                final icon = _getIcon(page.slug);
-                final bgColor = _getColor(page.slug);
-
-                return GestureDetector(
-                  onTap: () {
-                    // 🔀 Navigate based on slug
-                    switch (page.slug) {
-                      case 'checklist':
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const ChecklistPage(),
-                          ),
-                        );
-                        break;
-                      case 'dua_collections':
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const DuaCollectionsPage(),
-                          ),
-                        );
-                        break;
-                      case 'live-map':
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const LiveMapPage(),
-                          ),
-                        );
-                        break;
-                      default:
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => DetailPage(id: page.id),
-                          ),
-                        );
-                    }
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: bgColor.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: bgColor, width: 1),
-                    ),
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(icon, color: bgColor, size: 36),
-                        const SizedBox(height: 8),
-                        Text(
-                          page.title,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          );
+      backgroundColor: context.scaffoldBackgroundColor,
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: (int index) {
+          setState(() {
+            _selectedIndex = index;
+          });
         },
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: Colors.green,
+        unselectedItemColor: Colors.grey,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'হোম'),
+          BottomNavigationBarItem(icon: Icon(Icons.menu_book), label: 'গাইড'),
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'মানচিত্র'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'সেটিংস'),
+        ],
+      ),
+      body: SafeArea(
+        child:
+            isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : ListView(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        children: <Widget>[
+                          const Icon(Icons.menu, size: 28),
+                          8.width,
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'স্বাগতম!',
+                                style: boldTextStyle(
+                                  size: 20,
+                                  color: Colors.green,
+                                ),
+                              ),
+                              Text(
+                                'হজ গাইড অ্যাপে',
+                                style: secondaryTextStyle(size: 14),
+                              ),
+                            ],
+                          ).expand(),
+                          const Icon(Icons.search, color: Colors.grey),
+                        ],
+                      ),
+                    ),
+                    16.height,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        '📚 গাইড বিভাগসমূহ',
+                        style: boldTextStyle(size: 18),
+                      ),
+                    ),
+                    12.height,
+                    HorizontalList(
+                      itemCount: hajjPages.length,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemBuilder: (context, index) {
+                        final item = hajjPages[index];
+                        return GestureDetector(
+                          onTap: () => openPageBySlug(context, item),
+                          child: Container(
+                            margin: const EdgeInsets.only(right: 16),
+                            decoration: boxDecorationWithRoundedCorners(
+                              backgroundColor: Colors.green.shade50,
+                              borderRadius: radius(12),
+                              boxShadow: defaultBoxShadow(
+                                spreadRadius: 1,
+                                blurRadius: 4,
+                              ),
+                            ),
+                            padding: const EdgeInsets.all(12),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.menu_book,
+                                  size: 32,
+                                  color: Colors.green,
+                                ),
+                                8.height,
+                                Text(
+                                  item.title,
+                                  style: primaryTextStyle(size: 14),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    24.height,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '🕌 সেরা বিষয়সমূহ',
+                            style: boldTextStyle(size: 18, color: Colors.green),
+                          ),
+                          Text('সব দেখুন', style: secondaryTextStyle()),
+                        ],
+                      ),
+                    ),
+                    16.height,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: StaggeredGrid.count(
+                        crossAxisCount: 4,
+                        mainAxisSpacing: 12,
+                        crossAxisSpacing: 12,
+                        children:
+                            hajjPages.map((item) {
+                              return StaggeredGridTile.fit(
+                                crossAxisCellCount: 2,
+                                child: GestureDetector(
+                                  onTap: () => openPageBySlug(context, item),
+                                  child: Container(
+                                    decoration: boxDecorationWithRoundedCorners(
+                                      backgroundColor: Colors.white,
+                                      borderRadius: radius(16),
+                                      boxShadow: defaultBoxShadow(),
+                                    ),
+                                    padding: const EdgeInsets.all(12),
+                                    child: Column(
+                                      children: [
+                                        const Icon(
+                                          Icons.star_border,
+                                          color: Colors.orange,
+                                          size: 40,
+                                        ),
+                                        8.height,
+                                        Text(
+                                          item.title,
+                                          style: primaryTextStyle(),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                      ),
+                    ),
+                    50.height,
+                  ],
+                ),
       ),
     );
-  }
-
-  // 🌟 Icon based on slug
-  IconData _getIcon(String slug) {
-    switch (slug) {
-      case 'checklist':
-        return Icons.check_circle_outline;
-      case 'dua_collections':
-        return Icons.menu_book;
-      case 'live-map':
-        return Icons.map_outlined;
-      case 'hajj_steps':
-        return Icons.directions_walk;
-      default:
-        return Icons.article;
-    }
-  }
-
-  // 🎨 Color per slug
-  Color _getColor(String slug) {
-    switch (slug) {
-      case 'checklist':
-        return Colors.teal;
-      case 'dua_collections':
-        return Colors.deepOrange;
-      case 'live-map':
-        return Colors.indigo;
-      case 'hajj_steps':
-        return Colors.green;
-      default:
-        return Colors.blueGrey;
-    }
   }
 }

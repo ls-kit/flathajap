@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/home_page.dart';
+import 'package:hajj_app/screens/home_page.dart'; // ✅ Fixed import path
 
 void main() {
   runApp(const MyApp());
@@ -10,10 +10,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Hajj Guide',
-      theme: ThemeData(primarySwatch: Colors.green),
-      home: const HomePage(),
+    return const MaterialApp(
+      home: HajjHomeScreen(), // ✅ Class name from your screen
+      debugShowCheckedModeBanner: false,
     );
   }
 }
