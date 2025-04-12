@@ -326,7 +326,7 @@ class _HajjHomeScreenState extends State<HajjHomeScreen> {
                           child: Row(
                             children: [
                               Image.asset(
-                                '/images/dev.png', // 📷 Replace with actual image
+                                'assets/images/dev.png', // 📷 Replace with actual image
                                 height: 60,
                                 width: 60,
                                 fit: BoxFit.cover,

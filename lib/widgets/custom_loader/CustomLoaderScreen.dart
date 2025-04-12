@@ -80,7 +80,7 @@ class _CustomLoaderScreenState extends State<CustomLoaderScreen>
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Image.asset(
-                        '/icons/icon.png',
+                        'assets/icons/icon.png',
                         height: 160,
                         width: 160,
                         fit: BoxFit.cover,
