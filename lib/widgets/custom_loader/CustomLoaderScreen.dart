@@ -81,8 +81,8 @@ class _CustomLoaderScreenState extends State<CustomLoaderScreen>
                     children: [
                       Image.asset(
                         'assets/icons/icon.png',
-                        height: 160,
-                        width: 160,
+                        height: 60,
+                        width: 60,
                         fit: BoxFit.cover,
                       ),
                       16.height,

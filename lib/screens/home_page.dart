@@ -18,6 +18,15 @@ class HajjHomeScreen extends StatefulWidget {
 }
 
 class _HajjHomeScreenState extends State<HajjHomeScreen> {
+  IconData getPageIcon(String slug) {
+    if (slug.contains('checklist')) return Icons.checklist_rounded;
+    if (slug.contains('dua')) return Icons.menu_book_rounded;
+    if (slug.contains('live-map')) return Icons.location_on_rounded;
+    if (slug.contains('steps')) return Icons.format_list_numbered_rounded;
+    if (slug.contains('settings_about')) return Icons.support_agent_rounded;
+    return Icons.auto_awesome_rounded; // fallback icon
+  }
+
   late List<HajjPage> hajjPages = [];
   int _selectedIndex = 0;
   bool isLoading = true;
@@ -274,9 +283,9 @@ class _HajjHomeScreenState extends State<HajjHomeScreen> {
                                     padding: const EdgeInsets.all(12),
                                     child: Column(
                                       children: [
-                                        const Icon(
-                                          Icons.star_rounded,
-                                          color: Colors.orange,
+                                        Icon(
+                                          getPageIcon(item.slug),
+                                          color: Colors.green.shade700,
                                           size: 40,
                                         ),
                                         8.height,
@@ -293,6 +302,7 @@ class _HajjHomeScreenState extends State<HajjHomeScreen> {
                             }).toList(),
                       ),
                     ),
+
                     50.height,
                     // 👇 Developer Contact Card
                     // 👇 Developer Contact Card with WhatsApp

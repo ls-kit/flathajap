@@ -105,13 +105,18 @@ class SettingsAboutPage extends StatelessWidget {
                           ),
                           onPressed: () async {
                             final email = section['btn_link'] ?? '';
-                            final uri = Uri(scheme: 'mailto', path: email);
-                            if (await canLaunchUrl(uri)) {
-                              await launchUrl(uri);
-                            } else {
+                            final uri = Uri.parse('mailto:$email');
+                            try {
+                              if (!await launchUrl(
+                                uri,
+                                mode: LaunchMode.externalApplication,
+                              )) {
+                                throw 'Could not launch email app';
+                              }
+                            } catch (e) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text('ইমেইল পাঠানো যায়নি!'),
+                                  content: Text('ইমেইল পাঠানো যায়নি'),
                                 ),
                               );
                             }
@@ -135,14 +140,19 @@ class SettingsAboutPage extends StatelessWidget {
                             ),
                           ),
                           onPressed: () async {
-                            final link = section['btn_link'] ?? '';
-                            final uri = Uri.parse(link);
-                            if (await canLaunchUrl(uri)) {
-                              await launchUrl(uri);
-                            } else {
+                            final email = section['btn_link'] ?? '';
+                            final uri = Uri.parse('mailto:$email');
+                            try {
+                              if (!await launchUrl(
+                                uri,
+                                mode: LaunchMode.externalApplication,
+                              )) {
+                                throw 'Could not launch email app';
+                              }
+                            } catch (e) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text('লিঙ্ক খোলা যায়নি!'),
+                                  content: Text('লিঙ্ক খোলা যায়নি'),
                                 ),
                               );
                             }
